@@ -17,10 +17,8 @@ export const Toggle: React.FC = () => {
                 checked={value}
                 uncheckedIcon={false}
                 checkedIcon={false}
-                onChange={() => {
-                    value ?
-                        setValue(false) : setValue(true)
-                }}
+                
+                onChange={() => {setValue(state => !state)}}
             />
             <ToggleLabel>Dark</ToggleLabel>
         </Container>
