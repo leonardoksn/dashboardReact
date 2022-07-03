@@ -8,7 +8,7 @@ import {
 
 // const [value,setValue] = useState(false);
 export const Toggle: React.FC = () => {
-    let [value, setValue] = useState(true);
+    const [value, setValue] = useState(true);
 
     return (
         <Container>
@@ -17,8 +17,7 @@ export const Toggle: React.FC = () => {
                 checked={value}
                 uncheckedIcon={false}
                 checkedIcon={false}
-                
-                onChange={() => {setValue(state => !state)}}
+                onChange={() => { setValue(state => !state) }}
             />
             <ToggleLabel>Dark</ToggleLabel>
         </Container>
