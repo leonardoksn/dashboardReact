@@ -24,6 +24,7 @@ interface IData {
 const List: React.FC = () => {
 
     const [data, setData] = useState<IData[]>([]);
+    const [daySelected, setDaySelected] = useState<string>(String(new Date().getDate() + 1));
     const [mouthSelected, setMouthSelected] = useState<string>(String(new Date().getMonth() + 1));
     const [yearSelected, setYearSelected] = useState<string>(String(new Date().getFullYear() - 2));
 
@@ -41,16 +42,26 @@ const List: React.FC = () => {
     }, [type]);
 
     const listData = useMemo(() => {
-        if (type === 'entry-balance'){
+        if (type === 'entry-balance') {
             return gains;
         }
-        else if (type === 'exit-balance'){
+        else if (type === 'exit-balance') {
             return expenses;
-        }else 
+        } else
             return gains;
     }, [type]);
 
+    const days = [
+        { value: 0, label: 'Todos' },
+    ];
+
+    for (let i = 1; i < 31; i++) {
+        days.push({ value: i, label: String(i) })
+    }
+
+
     const months = [
+        { value: 0, label: 'Todos' },
         { value: 1, label: 'Janeiro' },
         { value: 2, label: 'Fevereiro' },
         { value: 3, label: 'Março' },
@@ -66,7 +77,7 @@ const List: React.FC = () => {
     ];
 
     const years = [
-
+        { value: 0, label: 'Todos' },
         { value: 2022, label: 2022 },
         { value: 2021, label: 2021 },
         { value: 2020, label: 2020 },
@@ -76,14 +87,28 @@ const List: React.FC = () => {
 
         const filtredData = listData.filter(item => {
             const date = new Date(item.date);
-            const mounth = String(date.getMonth() + 1);
+            const day = String(date.getDate() + 1)
+            const mouth = String(date.getMonth() + 1);
             const year = String(date.getFullYear());
 
-            return mounth === mouthSelected && year === yearSelected;
+            if (Number(mouthSelected) === 0 && Number(daySelected) !== 0 && Number(yearSelected) !== 0)
+                return day === daySelected && year === yearSelected;
+            else if (Number(daySelected) === 0 && Number(mouthSelected) !== 0 && Number(yearSelected) !== 0)
+                return mouth === mouthSelected && year === yearSelected;
+            else if (Number(mouthSelected) !== 0 && Number(yearSelected) === 0 && Number(daySelected) === 0)
+                return mouth === mouthSelected;
+            else if (Number(mouthSelected) !== 0 && Number(yearSelected) === 0 && Number(daySelected) !== 0)
+                return mouth === mouthSelected && day === daySelected;
+            else if (Number(mouthSelected) === 0 && Number(yearSelected) === 0 && Number(daySelected) !== 0)
+                return day === daySelected;
+            else if (Number(daySelected) === 0 && Number(mouthSelected) === 0 && Number(yearSelected) !== 0)
+                return year === yearSelected;
+            else if (Number(daySelected) === 0 && Number(mouthSelected) === 0 && Number(yearSelected) === 0)
+                return listData;
         });
 
         const response = filtredData.map(item => {
-       
+
             return {
                 id: String(Math.floor(Math.random() * 9999)),
                 description: item.description,
@@ -93,12 +118,13 @@ const List: React.FC = () => {
                 tagColor: item.frequency === 'eventual' ? '#4E41F0' : '#E44C4E'
             }
         })
-       
+
         setData(response);
-    }, [listData,mouthSelected,yearSelected, data.length]);
+    }, [listData, daySelected, mouthSelected, yearSelected, data.length]);
     return (
         <Container>
             <ContentHeader title={title.title} lineColor={title.lineColor}>
+                <SelectInput options={days} onChange={(e) => setDaySelected(e.target.value)} defaultValue={daySelected} />
                 <SelectInput options={months} onChange={(e) => setMouthSelected(e.target.value)} defaultValue={mouthSelected} />
                 <SelectInput options={years} onChange={(e) => setYearSelected(e.target.value)} defaultValue={yearSelected} />
             </ContentHeader>
